@@ -1,0 +1,745 @@
+{
+  "boards": [
+    {
+      "grid": [
+        "squash",
+        "drive",
+        "tennis",
+        "cut",
+        "sport",
+        "game",
+        "stroke",
+        "swim",
+        "fun"
+      ],
+      "center": "sport",
+      "pairs": {
+        "top_horiz": [
+          "squash",
+          "tennis"
+        ],
+        "mid_horiz": [
+          "cut",
+          "game"
+        ],
+        "bot_horiz": [
+          "stroke",
+          "fun"
+        ],
+        "left_vert": [
+          "squash",
+          "stroke"
+        ],
+        "mid_vert": [
+          "drive",
+          "swim"
+        ],
+        "right_vert": [
+          "tennis",
+          "fun"
+        ],
+        "diag_tl_br": [
+          "squash",
+          "fun"
+        ],
+        "diag_tr_bl": [
+          "tennis",
+          "stroke"
+        ]
+      },
+      "score": {
+        "overall": 2.69,
+        "weakest_path": 2.364,
+        "average_path": 3.39,
+        "corner_diversity": 8.23,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 2.364,
+          "mid_horiz": 3.312,
+          "bot_horiz": 2.59,
+          "left_vert": 2.468,
+          "mid_vert": 3.335,
+          "right_vert": 5.331,
+          "diag_tl_br": 2.868,
+          "diag_tr_bl": 4.83
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    },
+    {
+      "grid": [
+        "bowl",
+        "food",
+        "table",
+        "container",
+        "dish",
+        "kitchen",
+        "soup",
+        "meal",
+        "plate"
+      ],
+      "center": "dish",
+      "pairs": {
+        "top_horiz": [
+          "bowl",
+          "table"
+        ],
+        "mid_horiz": [
+          "container",
+          "kitchen"
+        ],
+        "bot_horiz": [
+          "soup",
+          "plate"
+        ],
+        "left_vert": [
+          "bowl",
+          "soup"
+        ],
+        "mid_vert": [
+          "food",
+          "meal"
+        ],
+        "right_vert": [
+          "table",
+          "plate"
+        ],
+        "diag_tl_br": [
+          "bowl",
+          "plate"
+        ],
+        "diag_tr_bl": [
+          "table",
+          "soup"
+        ]
+      },
+      "score": {
+        "overall": 2.86,
+        "weakest_path": 2.481,
+        "average_path": 3.78,
+        "corner_diversity": 8.07,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 4.281,
+          "mid_horiz": 3.086,
+          "bot_horiz": 3.228,
+          "left_vert": 2.828,
+          "mid_vert": 2.481,
+          "right_vert": 5.748,
+          "diag_tl_br": 5.267,
+          "diag_tr_bl": 3.318
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    },
+    {
+      "grid": [
+        "sun",
+        "planet",
+        "star",
+        "weather",
+        "sky",
+        "space",
+        "atmosphere",
+        "earth",
+        "moon"
+      ],
+      "center": "sky",
+      "pairs": {
+        "top_horiz": [
+          "sun",
+          "star"
+        ],
+        "mid_horiz": [
+          "weather",
+          "space"
+        ],
+        "bot_horiz": [
+          "atmosphere",
+          "moon"
+        ],
+        "left_vert": [
+          "sun",
+          "atmosphere"
+        ],
+        "mid_vert": [
+          "planet",
+          "earth"
+        ],
+        "right_vert": [
+          "star",
+          "moon"
+        ],
+        "diag_tl_br": [
+          "sun",
+          "moon"
+        ],
+        "diag_tr_bl": [
+          "star",
+          "atmosphere"
+        ]
+      },
+      "score": {
+        "overall": 3.06,
+        "weakest_path": 2.664,
+        "average_path": 4.28,
+        "corner_diversity": 7.45,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 5.468,
+          "mid_horiz": 2.664,
+          "bot_horiz": 5.091,
+          "left_vert": 3.625,
+          "mid_vert": 2.822,
+          "right_vert": 7.184,
+          "diag_tl_br": 3.131,
+          "diag_tr_bl": 4.237
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    },
+    {
+      "grid": [
+        "consider",
+        "think",
+        "expect",
+        "view",
+        "see",
+        "look",
+        "window",
+        "clear",
+        "make"
+      ],
+      "center": "see",
+      "pairs": {
+        "top_horiz": [
+          "consider",
+          "expect"
+        ],
+        "mid_horiz": [
+          "view",
+          "look"
+        ],
+        "bot_horiz": [
+          "window",
+          "make"
+        ],
+        "left_vert": [
+          "consider",
+          "window"
+        ],
+        "mid_vert": [
+          "think",
+          "clear"
+        ],
+        "right_vert": [
+          "expect",
+          "make"
+        ],
+        "diag_tl_br": [
+          "consider",
+          "make"
+        ],
+        "diag_tr_bl": [
+          "expect",
+          "window"
+        ]
+      },
+      "score": {
+        "overall": 2.67,
+        "weakest_path": 2.452,
+        "average_path": 2.99,
+        "corner_diversity": 9.1,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 2.452,
+          "mid_horiz": 5.085,
+          "bot_horiz": 2.867,
+          "left_vert": 2.629,
+          "mid_vert": 2.956,
+          "right_vert": 2.488,
+          "diag_tl_br": 2.488,
+          "diag_tr_bl": 2.993
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    },
+    {
+      "grid": [
+        "egg",
+        "hen",
+        "chicken",
+        "nest",
+        "bird",
+        "wings",
+        "animal",
+        "bat",
+        "flying"
+      ],
+      "center": "bird",
+      "pairs": {
+        "top_horiz": [
+          "egg",
+          "chicken"
+        ],
+        "mid_horiz": [
+          "nest",
+          "wings"
+        ],
+        "bot_horiz": [
+          "animal",
+          "flying"
+        ],
+        "left_vert": [
+          "egg",
+          "animal"
+        ],
+        "mid_vert": [
+          "hen",
+          "bat"
+        ],
+        "right_vert": [
+          "chicken",
+          "flying"
+        ],
+        "diag_tl_br": [
+          "egg",
+          "flying"
+        ],
+        "diag_tr_bl": [
+          "chicken",
+          "animal"
+        ]
+      },
+      "score": {
+        "overall": 3.88,
+        "weakest_path": 3.11,
+        "average_path": 6.11,
+        "corner_diversity": 8.16,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 5.825,
+          "mid_horiz": 8.041,
+          "bot_horiz": 6.721,
+          "left_vert": 3.153,
+          "mid_vert": 3.11,
+          "right_vert": 6.024,
+          "diag_tl_br": 6.083,
+          "diag_tr_bl": 9.939
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    },
+    {
+      "grid": [
+        "taste",
+        "tongue",
+        "organ",
+        "food",
+        "mouth",
+        "nose",
+        "eating",
+        "napkin",
+        "face"
+      ],
+      "center": "mouth",
+      "pairs": {
+        "top_horiz": [
+          "taste",
+          "organ"
+        ],
+        "mid_horiz": [
+          "food",
+          "nose"
+        ],
+        "bot_horiz": [
+          "eating",
+          "face"
+        ],
+        "left_vert": [
+          "taste",
+          "eating"
+        ],
+        "mid_vert": [
+          "tongue",
+          "napkin"
+        ],
+        "right_vert": [
+          "organ",
+          "face"
+        ],
+        "diag_tl_br": [
+          "taste",
+          "face"
+        ],
+        "diag_tr_bl": [
+          "organ",
+          "eating"
+        ]
+      },
+      "score": {
+        "overall": 3.3,
+        "weakest_path": 2.773,
+        "average_path": 4.68,
+        "corner_diversity": 8.46,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 4.226,
+          "mid_horiz": 2.855,
+          "bot_horiz": 2.773,
+          "left_vert": 5.038,
+          "mid_vert": 6.39,
+          "right_vert": 7.26,
+          "diag_tl_br": 5.464,
+          "diag_tr_bl": 3.415
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    },
+    {
+      "grid": [
+        "population",
+        "count",
+        "two",
+        "integer",
+        "number",
+        "three",
+        "digit",
+        "eight",
+        "four"
+      ],
+      "center": "number",
+      "pairs": {
+        "top_horiz": [
+          "population",
+          "two"
+        ],
+        "mid_horiz": [
+          "integer",
+          "three"
+        ],
+        "bot_horiz": [
+          "digit",
+          "four"
+        ],
+        "left_vert": [
+          "population",
+          "digit"
+        ],
+        "mid_vert": [
+          "count",
+          "eight"
+        ],
+        "right_vert": [
+          "two",
+          "four"
+        ],
+        "diag_tl_br": [
+          "population",
+          "four"
+        ],
+        "diag_tr_bl": [
+          "two",
+          "digit"
+        ]
+      },
+      "score": {
+        "overall": 2.7,
+        "weakest_path": 2.414,
+        "average_path": 3.33,
+        "corner_diversity": 8.25,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 2.605,
+          "mid_horiz": 3.081,
+          "bot_horiz": 2.414,
+          "left_vert": 2.463,
+          "mid_vert": 4.595,
+          "right_vert": 2.799,
+          "diag_tl_br": 3.524,
+          "diag_tr_bl": 5.128
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    },
+    {
+      "grid": [
+        "river",
+        "water",
+        "ocean",
+        "stream",
+        "current",
+        "tide",
+        "flow",
+        "movement",
+        "wave"
+      ],
+      "center": "current",
+      "pairs": {
+        "top_horiz": [
+          "river",
+          "ocean"
+        ],
+        "mid_horiz": [
+          "stream",
+          "tide"
+        ],
+        "bot_horiz": [
+          "flow",
+          "wave"
+        ],
+        "left_vert": [
+          "river",
+          "flow"
+        ],
+        "mid_vert": [
+          "water",
+          "movement"
+        ],
+        "right_vert": [
+          "ocean",
+          "wave"
+        ],
+        "diag_tl_br": [
+          "river",
+          "wave"
+        ],
+        "diag_tr_bl": [
+          "ocean",
+          "flow"
+        ]
+      },
+      "score": {
+        "overall": 2.94,
+        "weakest_path": 2.317,
+        "average_path": 4.36,
+        "corner_diversity": 7.82,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 8.199,
+          "mid_horiz": 2.878,
+          "bot_horiz": 5.892,
+          "left_vert": 4.63,
+          "mid_vert": 4.952,
+          "right_vert": 2.917,
+          "diag_tl_br": 2.317,
+          "diag_tr_bl": 3.091
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    },
+    {
+      "grid": [
+        "screen",
+        "display",
+        "presentation",
+        "movies",
+        "show",
+        "performance",
+        "actors",
+        "stage",
+        "theatre"
+      ],
+      "center": "show",
+      "pairs": {
+        "top_horiz": [
+          "screen",
+          "presentation"
+        ],
+        "mid_horiz": [
+          "movies",
+          "performance"
+        ],
+        "bot_horiz": [
+          "actors",
+          "theatre"
+        ],
+        "left_vert": [
+          "screen",
+          "actors"
+        ],
+        "mid_vert": [
+          "display",
+          "stage"
+        ],
+        "right_vert": [
+          "presentation",
+          "theatre"
+        ],
+        "diag_tl_br": [
+          "screen",
+          "theatre"
+        ],
+        "diag_tr_bl": [
+          "presentation",
+          "actors"
+        ]
+      },
+      "score": {
+        "overall": 2.64,
+        "weakest_path": 2.466,
+        "average_path": 3.03,
+        "corner_diversity": 8.32,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 2.47,
+          "mid_horiz": 2.466,
+          "bot_horiz": 4.845,
+          "left_vert": 3.096,
+          "mid_vert": 2.491,
+          "right_vert": 3.095,
+          "diag_tl_br": 3.301,
+          "diag_tr_bl": 2.475
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    },
+    {
+      "grid": [
+        "classroom",
+        "university",
+        "education",
+        "paper",
+        "book",
+        "learning",
+        "page",
+        "writing",
+        "text"
+      ],
+      "center": "book",
+      "pairs": {
+        "top_horiz": [
+          "classroom",
+          "education"
+        ],
+        "mid_horiz": [
+          "paper",
+          "learning"
+        ],
+        "bot_horiz": [
+          "page",
+          "text"
+        ],
+        "left_vert": [
+          "classroom",
+          "page"
+        ],
+        "mid_vert": [
+          "university",
+          "writing"
+        ],
+        "right_vert": [
+          "education",
+          "text"
+        ],
+        "diag_tl_br": [
+          "classroom",
+          "text"
+        ],
+        "diag_tr_bl": [
+          "education",
+          "page"
+        ]
+      },
+      "score": {
+        "overall": 3.2,
+        "weakest_path": 2.843,
+        "average_path": 4.4,
+        "corner_diversity": 7.67,
+        "playable": true,
+        "path_scores": {
+          "top_horiz": 3.253,
+          "mid_horiz": 6.726,
+          "bot_horiz": 3.751,
+          "left_vert": 4.446,
+          "mid_vert": 3.627,
+          "right_vert": 2.843,
+          "diag_tl_br": 5.491,
+          "diag_tr_bl": 5.083
+        }
+      },
+      "algorithm_params": {
+        "method": "semantic_magic_square_8_paths",
+        "scoring": "geometric_mean_pair_strength_weakest_link",
+        "morph_dedup": true,
+        "uniqueness_check": true,
+        "min_overall_score": 1.5,
+        "pair_diversity_bonus": true,
+        "center_selection": "max_cosine_distance"
+      }
+    }
+  ],
+  "total": 10
+}
