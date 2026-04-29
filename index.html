@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semantic Sudoku</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:        #1a1714;
+  --paper:      #f5f0e8;
+  --paper2:     #ede7d9;
+  --paper3:     #e4ddd0;
+  --rule:       #c8bfad;
+  --rule2:      #b0a490;
+  --ghost:      #9e9282;
+  --gold:       #8b6914;
+  --gold-light: #c9a84c;
+  --green:      #2d6a3f;
+  --green-bg:   #e8f5ec;
+  --green-rule: #7fbf94;
+  --red:        #8b2020;
+  --red-bg:     #fbeaea;
+  --radius:     6px;
+  --radius-lg:  12px;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: repeating-linear-gradient(
+    transparent, transparent 27px,
+    rgba(180,165,140,0.18) 27px, rgba(180,165,140,0.18) 28px
+  );
+}
+
+/* ── LOAD SCREEN ──────────────────────────────────────────────── */
+#loadScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 2rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.brand {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.4rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+.brand em { font-style: italic; color: var(--gold); }
+.brand-sub {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ghost);
+  margin-top: 0.4rem;
+}
+
+.load-card {
+  background: white;
+  border: 1.5px solid var(--rule);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  max-width: 340px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+.drop-zone {
+  border: 2px dashed var(--rule2);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: center;
+  display: block;
+}
+.drop-zone:hover, .drop-zone.over { border-color: var(--gold-light); background: #faf7f0; }
+.drop-icon { font-size: 1.8rem; display: block; margin-bottom: 0.5rem; }
+.drop-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ghost); line-height: 1.7; }
+.drop-label strong { display: block; color: var(--ink); font-size: 0.82rem; letter-spacing: 0.04em; margin-bottom: 0.2rem; }
+.drop-file { font-family: 'DM Mono'; font-size: 0.78rem; color: var(--gold); }
+#fileInput { display: none; }
+
+.divider { display: flex; align-items: center; gap: 0.75rem; color: var(--ghost); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+.demo-btn {
+  background: var(--ink); color: var(--paper); border: none;
+  border-radius: var(--radius); padding: 0.7rem 1rem;
+  font-family: 'DM Mono', monospace; font-size: 0.75rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  cursor: pointer; transition: opacity 0.15s; width: 100%;
+}
+.demo-btn:hover { opacity: 0.8; }
+
+/* ── GAME SCREEN ──────────────────────────────────────────────── */
+#gameScreen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: 3rem;
+}
+
+.topbar {
+  width: 100%; max-width: 520px;
+  padding: 1.75rem 1.25rem 0.75rem;
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 1rem;
+}
+.game-brand { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--ink); line-height: 1; }
+.game-brand em { font-style: italic; color: var(--gold); }
+.topbar-right { display: flex; align-items: center; gap: 0.75rem; }
+.puzzle-counter { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ghost); }
+.timer-badge {
+  font-size: 0.8rem; letter-spacing: 0.06em; color: var(--ink);
+  font-variant-numeric: tabular-nums; background: var(--paper2);
+  border: 1px solid var(--rule); border-radius: 4px; padding: 3px 8px;
+}
+.nav-pills { display: flex; gap: 0; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.nav-pill {
+  background: white; border: none; padding: 4px 10px;
+  font-family: 'DM Mono'; font-size: 0.8rem; color: var(--ghost);
+  cursor: pointer; transition: all 0.15s;
+}
+.nav-pill:hover { background: var(--paper2); color: var(--ink); }
+.nav-pill:disabled { opacity: 0.3; cursor: default; }
+.nav-pill + .nav-pill { border-left: 1px solid var(--rule); }
+
+.progress-row { width: 100%; max-width: 520px; padding: 0 1.25rem 1rem; display: flex; gap: 5px; }
+.pip { flex: 1; height: 3px; border-radius: 99px; background: var(--rule); transition: background 0.4s; }
+.pip.active { background: var(--gold-light); }
+.pip.done   { background: var(--green); }
+
+.instructions {
+  width: 100%; max-width: 520px; padding: 0 1.25rem 1rem;
+  font-size: 0.7rem; letter-spacing: 0.04em; color: var(--ghost); line-height: 1.6;
+}
+.instructions strong { color: var(--ink); }
+
+/* ── BOARD ────────────────────────────────────────────────────── */
+.board-wrap { width: 100%; max-width: 520px; padding: 0 1.25rem; }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  aspect-ratio: 1;
+}
+
+/* ── CELLS ────────────────────────────────────────────────────── */
+.cell {
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* CORNER */
+.cell.corner {
+  background: var(--ink);
+  border: 2px solid var(--ink);
+  cursor: default;
+}
+.cell.corner .word {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: clamp(0.72rem, 2.4vw, 1rem);
+  color: var(--paper);
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+/* EDGE — blank tile to type into */
+.cell.edge {
+  background: white;
+  border: 2px solid var(--rule);
+  cursor: text;
+}
+.cell.edge:hover:not(.solved) { border-color: var(--rule2); }
+.cell.edge.focused {
+  border-color: var(--gold-light);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+  z-index: 2;
+}
+.cell.edge.solved {
+  background: var(--green-bg);
+  border-color: var(--green-rule);
+  cursor: default;
+}
+.cell.edge.solved .word { color: var(--green); }
+
+/* CENTER */
+.cell.center {
+  background: var(--paper2);
+  border: 2px dashed var(--rule2);
+  cursor: default;
+}
+.cell.center.unlocked {
+  background: white;
+  border: 2px solid var(--gold-light);
+  cursor: text;
+}
+.cell.center.focused {
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+  z-index: 2;
+}
+.cell.center.solved {
+  background: var(--green-bg);
+  border: 2px solid var(--green-rule);
+  cursor: default;
+}
+.cell.center.solved .word { color: var(--green); }
+
+/* shared solved word */
+.word {
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: clamp(0.72rem, 2.4vw, 1rem);
+  text-align: center;
+  line-height: 1.2;
+  word-break: break-word;
+  color: var(--ink);
+  animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+/* input wrapper */
+.inp-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.cell-inp {
+  width: 100%;
+  border: none; outline: none;
+  background: transparent;
+  font-family: 'DM Serif Display', serif;
+  font-style: italic;
+  font-size: clamp(0.7rem, 2.2vw, 0.95rem);
+  color: var(--ink);
+  text-align: center;
+  caret-color: var(--gold);
+  padding: 0; line-height: 1.3;
+}
+.cell-inp::placeholder { color: var(--rule2); font-style: italic; }
+
+.cell-sublabel {
+  font-family: 'DM Mono';
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rule2);
+  text-align: center;
+  line-height: 1;
+  pointer-events: none;
+}
+.cell.focused .cell-sublabel { color: var(--gold); }
+
+/* center lock state */
+.lock-glyph {
+  font-size: 1.1rem;
+  color: var(--rule2);
+  line-height: 1;
+}
+
+/* ── ANIMATIONS ───────────────────────────────────────────────── */
+@keyframes popIn {
+  from { transform: scale(0.7); opacity: 0; }
+  60%  { transform: scale(1.06); }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  18%     { transform: translateX(-8px); }
+  36%     { transform: translateX(8px); }
+  54%     { transform: translateX(-5px); }
+  72%     { transform: translateX(5px); }
+  88%     { transform: translateX(-2px); }
+}
+
+.cell.wrong { animation: shake 0.44s ease; border-color: var(--red) !important; background: var(--red-bg) !important; }
+
+/* ── STATUS STRIP ─────────────────────────────────────────────── */
+.status-strip {
+  width: 100%; max-width: 520px;
+  padding: 0.75rem 1.25rem 0;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 1rem;
+}
+.mistakes-badge { display: flex; align-items: center; gap: 0.4rem; font-size: 0.68rem; letter-spacing: 0.06em; color: var(--ghost); text-transform: uppercase; }
+.mdot { width: 7px; height: 7px; border-radius: 50%; background: var(--rule); transition: background 0.3s; }
+.mdot.on { background: var(--red); }
+.solved-count { font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ghost); }
+.solved-count strong { color: var(--green); }
+
+/* ── WIN OVERLAY ──────────────────────────────────────────────── */
+.win-overlay {
+  position: fixed; inset: 0;
+  background: rgba(245,240,232,0.88);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.4s;
+}
+.win-overlay.show { opacity: 1; pointer-events: all; }
+
+.win-card {
+  background: white; border: 1.5px solid var(--rule);
+  border-radius: var(--radius-lg); padding: 2.5rem 2rem;
+  max-width: 380px; width: calc(100% - 2rem);
+  text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+  transform: scale(0.92) translateY(10px);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s;
+}
+.win-overlay.show .win-card { transform: scale(1) translateY(0); }
+
+.win-title { font-family: 'DM Serif Display', serif; font-style: italic; font-size: 2.2rem; color: var(--ink); margin-bottom: 0.2rem; }
+.win-lede { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ghost); margin-bottom: 0.25rem; }
+.win-word { font-family: 'DM Serif Display', serif; font-size: 2.8rem; font-style: italic; color: var(--green); margin-bottom: 1.5rem; display: block; }
+
+.win-mini-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin-bottom: 1.5rem; }
+.wc { aspect-ratio:1; border-radius:8px; display:flex; align-items:center; justify-content:center; font-family:'DM Serif Display',serif; font-style:italic; font-size:clamp(0.55rem,1.8vw,0.78rem); text-align:center; padding:4px; line-height:1.2; }
+.wc.corner { background:var(--ink); color:var(--paper); }
+.wc.edge   { background:var(--green-bg); color:var(--green); border:1px solid var(--green-rule); }
+.wc.center { background:var(--green-bg); color:var(--green); border:1px solid var(--green-rule); font-size:clamp(0.6rem,2vw,0.82rem); }
+
+.win-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:1.75rem; }
+.wstat { background:var(--paper2); border-radius:var(--radius); padding:0.6rem 0.4rem; }
+.wstat-v { font-size:1.5rem; font-family:'DM Serif Display',serif; font-style:italic; color:var(--ink); display:block; line-height:1; }
+.wstat-l { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ghost); display:block; margin-top:3px; }
+
+.win-btns { display:flex; gap:8px; }
+.wbtn { flex:1; padding:0.7rem; border-radius:var(--radius); font-family:'DM Mono'; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:all 0.15s; border:1px solid var(--rule); background:white; color:var(--ghost); }
+.wbtn:hover { background:var(--paper2); color:var(--ink); }
+.wbtn.primary { background:var(--ink); color:var(--paper); border-color:var(--ink); flex:2; }
+.wbtn.primary:hover { opacity:0.8; }
+
+/* ── TOAST ────────────────────────────────────────────────────── */
+.toast {
+  position:fixed; bottom:1.5rem; left:50%;
+  transform:translateX(-50%) translateY(60px);
+  background:var(--ink); color:var(--paper);
+  padding:0.55rem 1.2rem; border-radius:99px;
+  font-size:0.72rem; letter-spacing:0.06em;
+  pointer-events:none; z-index:200; white-space:nowrap;
+  transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- WIN OVERLAY -->
+<div class="win-overlay" id="winOverlay">
+  <div class="win-card">
+    <div class="win-title">Solved!</div>
+    <div class="win-lede">The center was</div>
+    <span class="win-word" id="winWord">—</span>
+    <div class="win-mini-grid" id="winMiniGrid"></div>
+    <div class="win-stats">
+      <div class="wstat"><span class="wstat-v" id="wTime">0:00</span><span class="wstat-l">Time</span></div>
+      <div class="wstat"><span class="wstat-v" id="wMist">0</span><span class="wstat-l">Mistakes</span></div>
+      <div class="wstat"><span class="wstat-v">5/5</span><span class="wstat-l">Tiles</span></div>
+    </div>
+    <div class="win-btns">
+      <button class="wbtn" onclick="closeWin()">Review</button>
+      <button class="wbtn primary" id="wNext" onclick="goNext()">Next puzzle →</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOAD SCREEN -->
+<div id="loadScreen">
+  <div>
+    <div class="brand">Semantic<em>Sudoku</em></div>
+    <div class="brand-sub">A lateral thinking word puzzle</div>
+  </div>
+  <div class="load-card">
+    <label class="drop-zone" id="dropZone" for="fileInput">
+      <span class="drop-icon">⬡</span>
+      <div class="drop-label">
+        <strong>Drop your boards file here</strong>
+        or click to browse
+        <span class="drop-file">semantic_sudoku_boards.json</span>
+      </div>
+    </label>
+    <input type="file" id="fileInput" accept=".json,application/json">
+    <div class="divider">or</div>
+    <button class="demo-btn" onclick="loadDemo()">Play demo puzzles</button>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen">
+  <div class="topbar">
+    <div class="game-brand">Semantic<em>Sudoku</em></div>
+    <div class="topbar-right">
+      <span class="puzzle-counter" id="pCounter">1 / 1</span>
+      <span class="timer-badge" id="timerEl">0:00</span>
+      <div class="nav-pills">
+        <button class="nav-pill" id="prevBtn" onclick="prevPuzzle()">←</button>
+        <button class="nav-pill" id="nextBtn" onclick="goNext()">→</button>
+      </div>
+    </div>
+  </div>
+  <div class="progress-row" id="pips"></div>
+  <div class="instructions">
+    The four <strong>dark corners</strong> are your anchors. For each blank tile, type the word that semantically bridges its two opposite corners, then press <strong>Enter</strong>. Unlock the center last.
+  </div>
+  <div class="board-wrap">
+    <div class="board" id="board"></div>
+  </div>
+  <div class="status-strip">
+    <div class="mistakes-badge">
+      Mistakes
+      <span class="mdot" id="md0"></span>
+      <span class="mdot" id="md1"></span>
+      <span class="mdot" id="md2"></span>
+      <span class="mdot" id="md3"></span>
+      <span class="mdot" id="md4"></span>
+    </div>
+    <div class="solved-count">Tiles: <strong id="tileCount">0</strong> / 5</div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   DEMO DATA
+═══════════════════════════════════════════════════════════════ */
+const DEMO = { boards: [
+  { grid:["flame","ember","ash","smoke","fire","candle","torch","burn","spark"],       center:"fire",   pairs:{diagonal_1:["flame","spark"],  diagonal_2:["ash","torch"],        vertical:["ember","burn"],     horizontal:["smoke","candle"]} },
+  { grid:["spirit","specter","memory","apparition","ghost","sheet","haunt","undead","silent"], center:"ghost",  pairs:{diagonal_1:["spirit","silent"], diagonal_2:["memory","haunt"],     vertical:["specter","undead"], horizontal:["apparition","sheet"]} },
+  { grid:["treaty","copy","anvil","heat","forge","fake","counterfeit","hammer","metal"],center:"forge",  pairs:{diagonal_1:["treaty","metal"],  diagonal_2:["anvil","counterfeit"],vertical:["copy","hammer"],   horizontal:["heat","fake"]} },
+  { grid:["origin","soil","tree","tooth","root","ancestor","core","plant","heritage"], center:"root",   pairs:{diagonal_1:["origin","heritage"],diagonal_2:["tree","core"],        vertical:["soil","plant"],     horizontal:["tooth","ancestor"]} },
+  { grid:["ship","harbor","foundation","dock","anchor","sea","burden","sailor","hold"],center:"anchor", pairs:{diagonal_1:["ship","hold"],     diagonal_2:["foundation","burden"],vertical:["harbor","sailor"],  horizontal:["dock","sea"]} },
+], total:5 };
+
+/* ═══════════════════════════════════════════════════════════════
+   GRID LAYOUT
+   Positions:  0(TL)  1(T)   2(TR)
+               3(L)   4(C)   5(R)
+               6(BL)  7(B)   8(BR)
+   Corners (given): 0,2,6,8
+   Edges   (type) : 1,3,5,7
+   Center  (type) : 4  — locked until all 4 edges solved
+
+   Edge sublabels show the two corners it bridges:
+     1(T)  ↔ corners 0,2
+     3(L)  ↔ corners 0,6
+     5(R)  ↔ corners 2,8
+     7(B)  ↔ corners 6,8
+═══════════════════════════════════════════════════════════════ */
+const CORNERS = [0,2,6,8];
+const EDGES   = [1,3,5,7];
+const EDGE_NEIGHBORS = { 1:[0,2], 3:[0,6], 5:[2,8], 7:[6,8] };
+const TAB_ORDER = [1,3,5,7,4];
+
+/* ═══════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════ */
+let boards    = [];
+let curIdx    = 0;
+let solved    = new Set();
+let mistakes  = 0;
+let tStart    = null;
+let tTick     = null;
+let activePos = null;
+const doneBoards = {};
+
+/* ═══════════════════════════════════════════════════════════════
+   FILE LOAD
+═══════════════════════════════════════════════════════════════ */
+document.getElementById('fileInput').addEventListener('change', e => {
+  if (e.target.files[0]) readFile(e.target.files[0]);
+});
+const dz = document.getElementById('dropZone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', ()  => dz.classList.remove('over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('over');
+  if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]);
+});
+
+function readFile(f) {
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      if (!d.boards?.length) throw 0;
+      startGame(d.boards);
+    } catch { showToast('Invalid JSON — check your file'); }
+  };
+  r.readAsText(f);
+}
+function loadDemo() { startGame(DEMO.boards); }
+
+function startGame(data) {
+  boards = data;
+  document.getElementById('loadScreen').style.display = 'none';
+  const gs = document.getElementById('gameScreen');
+  gs.style.display = 'flex';
+  gs.style.flexDirection = 'column';
+  gs.style.alignItems = 'center';
+  buildPips();
+  loadPuzzle(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PUZZLE LOAD
+═══════════════════════════════════════════════════════════════ */
+function loadPuzzle(i) {
+  curIdx    = i;
+  solved    = new Set();
+  mistakes  = 0;
+  activePos = null;
+
+  stopTimer(); startTimer();
+  refreshMistakeDots();
+  refreshTileCount();
+  document.getElementById('pCounter').textContent = `${i+1} / ${boards.length}`;
+  document.getElementById('prevBtn').disabled = i === 0;
+  document.getElementById('nextBtn').disabled = i === boards.length - 1;
+  refreshPips();
+  renderBoard();
+}
+
+function buildPips() {
+  const row = document.getElementById('pips');
+  row.innerHTML = '';
+  boards.forEach((_, i) => {
+    const p = document.createElement('div');
+    p.className = 'pip'; p.id = `pip${i}`;
+    row.appendChild(p);
+  });
+}
+function refreshPips() {
+  boards.forEach((_, i) => {
+    const p = document.getElementById(`pip${i}`);
+    if (!p) return;
+    p.className = 'pip' + (doneBoards[i] ? ' done' : i === curIdx ? ' active' : '');
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER BOARD
+═══════════════════════════════════════════════════════════════ */
+function renderBoard() {
+  const { grid } = boards[curIdx];
+  const container = document.getElementById('board');
+  container.innerHTML = '';
+
+  for (let pos = 0; pos < 9; pos++) {
+    const el = document.createElement('div');
+    el.id = `cell${pos}`;
+    el.dataset.pos = pos;
+
+    if (CORNERS.includes(pos)) {
+      /* ── CORNER ── */
+      el.className = 'cell corner';
+      el.innerHTML = `<div class="word">${grid[pos]}</div>`;
+
+    } else if (pos === 4) {
+      /* ── CENTER ── */
+      el.className = 'cell center';
+      el.innerHTML = `
+        <div class="lock-glyph">○</div>
+        <div class="word" style="display:none">${grid[pos]}</div>
+        <div class="inp-wrap" style="display:none">
+          <input class="cell-inp" type="text" autocomplete="off" autocorrect="off"
+                 spellcheck="false" placeholder="…" data-pos="4">
+          <div class="cell-sublabel">center</div>
+        </div>`;
+      el.addEventListener('click', () => {
+        if (el.classList.contains('unlocked') && !el.classList.contains('solved'))
+          focusPos(4);
+      });
+
+    } else {
+      /* ── EDGE ── */
+      el.className = 'cell edge';
+      const [ca, cb] = EDGE_NEIGHBORS[pos];
+      el.innerHTML = `
+        <div class="word" style="display:none">${grid[pos]}</div>
+        <div class="inp-wrap">
+          <input class="cell-inp" type="text" autocomplete="off" autocorrect="off"
+                 spellcheck="false" placeholder="?" data-pos="${pos}">
+          <div class="cell-sublabel">${grid[ca]} · ${grid[cb]}</div>
+        </div>`;
+      el.addEventListener('click', () => {
+        if (!el.classList.contains('solved')) focusPos(pos);
+      });
+    }
+
+    container.appendChild(el);
+
+    /* attach keydown to any input we just created */
+    const inp = el.querySelector('.cell-inp');
+    if (inp) {
+      inp.addEventListener('keydown', onKey);
+      inp.addEventListener('focus', () => {
+        document.querySelectorAll('.cell').forEach(c => c.classList.remove('focused'));
+        el.classList.add('focused');
+        activePos = pos;
+      });
+    }
+  }
+
+  /* auto-focus first edge */
+  setTimeout(() => focusPos(1), 80);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOCUS HELPERS
+═══════════════════════════════════════════════════════════════ */
+function focusPos(pos) {
+  const cell = document.getElementById(`cell${pos}`);
+  if (!cell || cell.classList.contains('solved')) return;
+  if (pos === 4 && !cell.classList.contains('unlocked')) return;
+  const inp = cell.querySelector('.cell-inp');
+  if (inp) inp.focus();
+}
+
+function cycleTab(dir) {
+  const available = TAB_ORDER.filter(p => {
+    if (solved.has(p)) return false;
+    if (p === 4) return solved.size === 4;
+    return true;
+  });
+  if (!available.length) return;
+  const ci = available.indexOf(activePos);
+  const next = available[(ci + dir + available.length) % available.length];
+  focusPos(next);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   KEY HANDLER
+═══════════════════════════════════════════════════════════════ */
+function onKey(e) {
+  const pos = parseInt(e.target.dataset.pos);
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const val = e.target.value.trim().toLowerCase();
+    if (val) checkAnswer(pos, val, e.target);
+  }
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    cycleTab(e.shiftKey ? -1 : 1);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANSWER CHECK
+═══════════════════════════════════════════════════════════════ */
+function checkAnswer(pos, guess, inp) {
+  const answer = boards[curIdx].grid[pos].toLowerCase();
+
+  if (guess === answer) {
+    /* ✓ CORRECT */
+    solved.add(pos);
+    const cell = document.getElementById(`cell${pos}`);
+    cell.classList.remove('focused');
+    cell.classList.add('solved');
+
+    /* swap input → word */
+    const inpWrap = cell.querySelector('.inp-wrap');
+    const word    = cell.querySelector('.word');
+    if (inpWrap) inpWrap.style.display = 'none';
+    if (word)    { word.style.display = 'block'; }
+
+    refreshTileCount();
+
+    if (solved.size === 4 && !solved.has(4)) {
+      unlockCenter();
+    }
+    if (solved.size === 5) {
+      setTimeout(showWin, 500);
+      return;
+    }
+    /* advance */
+    setTimeout(() => {
+      const next = TAB_ORDER.find(p => !solved.has(p) && (p !== 4 || solved.size >= 4));
+      if (next !== undefined) focusPos(next);
+    }, 100);
+
+  } else {
+    /* ✗ WRONG */
+    mistakes++;
+    refreshMistakeDots();
+    const cell = document.getElementById(`cell${pos}`);
+    cell.classList.add('wrong');
+    setTimeout(() => { cell.classList.remove('wrong'); }, 500);
+    setTimeout(() => { inp.value = ''; inp.focus(); }, 440);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UNLOCK CENTER
+═══════════════════════════════════════════════════════════════ */
+function unlockCenter() {
+  const cell   = document.getElementById('cell4');
+  const lock   = cell.querySelector('.lock-glyph');
+  const inpWrap = cell.querySelector('.inp-wrap');
+  cell.classList.add('unlocked');
+  if (lock)    lock.style.display = 'none';
+  if (inpWrap) inpWrap.style.display = 'flex';
+  showToast('All edges found — now reveal the center!');
+  setTimeout(() => focusPos(4), 200);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   WIN
+═══════════════════════════════════════════════════════════════ */
+function showWin() {
+  stopTimer();
+  doneBoards[curIdx] = true;
+  refreshPips();
+
+  const { grid } = boards[curIdx];
+  document.getElementById('winWord').textContent = grid[4];
+  document.getElementById('wTime').textContent   = formatTime(getElapsed());
+  document.getElementById('wMist').textContent   = mistakes;
+  document.getElementById('wNext').style.display = curIdx < boards.length-1 ? '' : 'none';
+
+  /* mini grid */
+  const mg = document.getElementById('winMiniGrid');
+  mg.innerHTML = '';
+  for (let p = 0; p < 9; p++) {
+    const d = document.createElement('div');
+    d.className = `wc ${CORNERS.includes(p) ? 'corner' : p===4 ? 'center' : 'edge'}`;
+    d.textContent = grid[p];
+    mg.appendChild(d);
+  }
+
+  document.getElementById('winOverlay').classList.add('show');
+}
+
+function closeWin() { document.getElementById('winOverlay').classList.remove('show'); }
+function goNext() {
+  closeWin();
+  if (curIdx < boards.length-1) loadPuzzle(curIdx+1);
+}
+function prevPuzzle() { if (curIdx > 0) loadPuzzle(curIdx-1); }
+
+/* ═══════════════════════════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════════════════════════ */
+function refreshTileCount() {
+  document.getElementById('tileCount').textContent = solved.size;
+}
+function refreshMistakeDots() {
+  for (let i = 0; i < 5; i++) {
+    const d = document.getElementById(`md${i}`);
+    if (d) d.className = 'mdot' + (i < mistakes ? ' on' : '');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TIMER
+═══════════════════════════════════════════════════════════════ */
+function startTimer() {
+  tStart = Date.now();
+  tTick  = setInterval(() => {
+    document.getElementById('timerEl').textContent = formatTime(getElapsed());
+  }, 1000);
+}
+function stopTimer()  { clearInterval(tTick); tTick = null; }
+function getElapsed() { return tStart ? Math.floor((Date.now()-tStart)/1000) : 0; }
+function formatTime(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════════════ */
+let _tt;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => el.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>
